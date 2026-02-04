@@ -6,10 +6,13 @@ import { SafeProductImage } from "@/components/ui/safe-product-image";
 import { getProductByNumberOptions } from "@/hooks/query-options";
 import type { Product } from "@/schemas/product";
 import { useQuery } from "@tanstack/react-query";
+import useEmblaCarousel from "embla-carousel-react";
 
 export default function Page() {
   const params = useParams();
   const router = useRouter();
+  const [emblaRef] = useEmblaCarousel({});
+
   const productNumber = params?.number as string;
   const { data, isPending, error } = useQuery(
     getProductByNumberOptions(productNumber),
@@ -54,19 +57,28 @@ export default function Page() {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 min-h-screen flex-col gap-6 px-16 py-6 font-sans dark:bg-black dark:text-zinc-50">
+    <div className="grid grid-cols-1 grid-rows-2 md:grid-cols-[400px_1fr] md:grid-rows-1 min-h-screen flex-col gap-6 px-4 lg:px-16 py-6 font-sans dark:bg-black dark:text-zinc-50 max-w-dvw overflow-hidden">
       {product.images.length > 0 && (
-        <ul className="list-disc pl-5 text-sm opacity-90">
-          {product.images.map((img, i) => (
-            <SafeProductImage
-              key={`${img.url}-${img.name}`}
-              src={img.url}
-              alt={img.name}
-              width={400}
-              height={300}
-            />
-          ))}
-        </ul>
+        <div className="flex justify-center">
+          <div className="overflow-hidden mx-auto" ref={emblaRef}>
+            <ul className="flex list-none opacity-90">
+              {product.images.map((img, i) => (
+                <li
+                  key={`${img.url}-${img.name}`}
+                  className="w-100 flex grow-0 shrink-0"
+                >
+                  <SafeProductImage
+                    src={img.url}
+                    alt={img.name}
+                    width={400}
+                    height={300}
+                    loading={i === 0 ? "eager" : "lazy"}
+                  />
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
       )}
 
       <article className="space-y-2">
