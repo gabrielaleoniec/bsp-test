@@ -1,0 +1,2 @@
+echo → "ESLinter for staged files will be run"
+npx lint-staged
