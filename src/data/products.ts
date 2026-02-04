@@ -1,7 +1,9 @@
-export const products = [
+import type { Product } from "@/schemas/product";
+
+export const products: Product[] = [
   {
-    name: "b0006se5bq",
-    number: "singing coach unlimited",
+    number: "b0006se5bq",
+    name: "singing coach unlimited",
     description:
       "singing coach unlimited - electronic learning products (win me nt 2000 xp)",
     images: [
@@ -16,16 +18,15 @@ export const products = [
     ],
   },
   {
-    name: "b00021xhzw",
-    number:
-      "adobe after effects professional 6.5 upgrade from standard to professional",
+    number: "b00021xhzw",
+    name: "adobe after effects professional 6.5 upgrade from standard to professional",
     description:
       "upgrade only; installation of after effects standard new disk caching tools speed up your interactive work save any combination of animation parameters as presets",
     images: [],
   },
   {
-    name: "b00021xhzw",
-    number: "domino designer/developer v5.0",
+    number: "b00021xhzw",
+    name: "domino designer/developer v5.0",
     description:
       "reference domino designer/developer r5 doc pack includes the following titles: application development with domino designer (intermediate-advanced) 536 pages",
     images: [
