@@ -1,12 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import { products } from "@/data/products";
 
 export async function GET(
-  request: Request,
-  { params }: { params: { number: string } },
+  _: NextRequest,
+  { params }: { params: Promise<{ number: string }> },
 ) {
-  const productNumber = decodeURIComponent(params.number);
+  const productNumber = decodeURIComponent((await params).number);
 
   // Find all products matching the number (case-insensitive)
   const matchingProducts = products.filter(
