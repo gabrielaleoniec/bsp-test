@@ -2,6 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 
+import { SafeProductImage } from "@/components/ui/safe-product-image";
 import { getProductByNumberOptions } from "@/hooks/query-options";
 import type { Product } from "@/schemas/product";
 import { useQuery } from "@tanstack/react-query";
@@ -53,21 +54,28 @@ export default function Page() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col gap-6 px-16 py-6 font-sans dark:bg-black dark:text-zinc-50">
-      <h1 className="text-xl font-semibold tracking-tight">Product</h1>
+    <div className="grid grid-cols-1 sm:grid-cols-2 min-h-screen flex-col gap-6 px-16 py-6 font-sans dark:bg-black dark:text-zinc-50">
+      {product.images.length > 0 && (
+        <ul className="list-disc pl-5 text-sm opacity-90">
+          {product.images.map((img, i) => (
+            <SafeProductImage
+              key={`${img.url}-${img.name}`}
+              src={img.url}
+              alt={img.name}
+              width={400}
+              height={300}
+            />
+          ))}
+        </ul>
+      )}
 
       <article className="space-y-2">
-        <h2 className="text-lg font-semibold">{product.number}</h2>
-        <p className="text-sm opacity-90">{product.description}</p>
-        {product.images.length > 0 && (
-          <ul className="list-disc pl-5 text-sm opacity-90">
-            {product.images.map((img) => (
-              <li key={`${img.url}-${img.name}`}>
-                {img.name} — {img.url}
-              </li>
-            ))}
-          </ul>
-        )}
+        <h1 className="text-xl font-semibold tracking-tight">{product.name}</h1>
+        <div className="flex flex-row gap-1 text-sm">
+          <span className="text-sm font-semibold">Product number:</span>
+          <span className="text-sm">{product.number}</span>
+        </div>
+        <p className="text-md opacity-90">{product.description}</p>
       </article>
     </div>
   );
