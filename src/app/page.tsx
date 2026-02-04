@@ -1,4 +1,4 @@
-export default function Home() {
+const Home = () => {
   return (
     <div className="flex min-h-screen items-center justify-center font-sans dark:bg-black">
       <main className="flex min-h-screen w-full flex-col items-start justify-start py-6 px-16">
@@ -10,4 +10,6 @@ export default function Home() {
       </main>
     </div>
   );
-}
+};
+
+export default Home;
