@@ -16,6 +16,7 @@
     "prettier": "prettier --config ./config/prettier.cjs --write ./src/**/*"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.20",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "next": "16.1.6",
