@@ -45,7 +45,7 @@ const Home = () => {
                     <td>
                       <Link
                         href={`/products/${encodeURIComponent(product.number)}`}
-                        className="cursor-pointer"
+                        className="inline-block cursor-pointer w-100"
                       >
                         {product.name}
                       </Link>
@@ -53,7 +53,7 @@ const Home = () => {
                     <td>
                       <Link
                         href={`/products/${encodeURIComponent(product.number)}`}
-                        className="cursor-pointer"
+                        className="inline-block cursor-pointer w-100"
                       >
                         {product.number}
                       </Link>
