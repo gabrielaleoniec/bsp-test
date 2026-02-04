@@ -1,5 +1,24 @@
 import { API_URL } from "@/constants/urls";
-import { type Product, ProductsResponseSchema } from "@/schemas/product";
+import {
+  type Product,
+  ProductsListSchema,
+  ProductsResponseSchema,
+} from "@/schemas/product";
+
+export async function getProducts(): Promise<Product[]> {
+  const res = await fetch(`${API_URL}api/products`, { cache: "no-store" });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch products (${res.status})`);
+  }
+
+  const json = await res.json();
+  const parsed = ProductsListSchema.safeParse(json);
+  if (!parsed.success) {
+    throw new Error(`Invalid products payload: ${parsed.error.message}`);
+  }
+  return parsed.data;
+}
 
 export async function getProductByNumber(
   number: string,

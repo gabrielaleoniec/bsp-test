@@ -1,5 +1,11 @@
-import { getProductByNumber } from "@/server/functions";
+import { getProductByNumber, getProducts } from "@/server/functions";
 import { queryOptions } from "@tanstack/react-query";
+
+export const getProductsOptions = () =>
+  queryOptions({
+    queryKey: ["products"],
+    queryFn: getProducts,
+  });
 
 export const getProductByNumberOptions = (number: string) =>
   queryOptions({
