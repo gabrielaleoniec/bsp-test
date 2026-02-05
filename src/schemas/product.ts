@@ -19,7 +19,10 @@ export const ProductsResponseSchema = z.union([
 
 export const ProductsListSchema = z.array(ProductSchema);
 
+export const ProductPatchSchema = ProductSchema.partial();
+
 export type ProductImage = z.infer<typeof ProductImageSchema>;
 export type Product = z.infer<typeof ProductSchema>;
 export type ProductsResponse = z.infer<typeof ProductsResponseSchema>;
 export type ProductsList = z.infer<typeof ProductsListSchema>;
+export type ProductPatch = z.infer<typeof ProductPatchSchema>;

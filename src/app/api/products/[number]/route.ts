@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { products } from "@/data/products";
+import { ProductPatchSchema } from "@/schemas/product";
 
 export async function GET(
   _: NextRequest,
@@ -8,7 +9,6 @@ export async function GET(
 ) {
   const productNumber = decodeURIComponent((await params).number);
 
-  // Find all products matching the number (case-insensitive)
   const matchingProducts = products.filter(
     (product) => product.number.toLowerCase() === productNumber.toLowerCase(),
   );
@@ -17,9 +17,48 @@ export async function GET(
     return NextResponse.json({ error: "Product not found" }, { status: 404 });
   }
 
-  // If only one product matches, return it directly
-  // Otherwise return the array of matching products
   return NextResponse.json(
     matchingProducts.length === 1 ? matchingProducts[0] : matchingProducts,
   );
+}
+
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ number: string }> },
+) {
+  const productNumber = decodeURIComponent((await params).number);
+
+  const body = await request.json();
+  const parsed = ProductPatchSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid body", details: parsed.error.flatten() },
+      { status: 400 },
+    );
+  }
+
+  const patch = parsed.data;
+  const indices = products
+    .map((p, i) =>
+      p.number.toLowerCase() === productNumber.toLowerCase() ? i : -1,
+    )
+    .filter((i) => i >= 0);
+
+  if (indices.length === 0) {
+    return NextResponse.json({ error: "Product not found" }, { status: 404 });
+  }
+
+  for (const i of indices) {
+    if (patch.name !== undefined) products[i].name = patch.name;
+    if (patch.number !== undefined) products[i].number = patch.number;
+    if (patch.description !== undefined)
+      products[i].description = patch.description;
+    if (patch.images !== undefined) products[i].images = patch.images;
+  }
+
+  const updated =
+    indices.length === 1
+      ? products[indices[0]]
+      : indices.map((i) => products[i]);
+  return NextResponse.json(updated);
 }
