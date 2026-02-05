@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 
-import { getProductsOptions } from "@/hooks/query-options";
-import { useQuery } from "@tanstack/react-query";
+import { useProductsStore } from "@/store/products-store";
 
 const Home = () => {
-  const { data: products, isPending, error } = useQuery(getProductsOptions());
+  const products = useProductsStore((s) => s.products);
+  const hasSyncedOnce = useProductsStore((s) => s.hasSyncedOnce);
+  const isPending = !hasSyncedOnce;
 
   return (
     <div className="flex min-h-screen items-center justify-center font-sans dark:bg-black">
@@ -22,13 +23,7 @@ const Home = () => {
             </p>
           )}
 
-          {error && (
-            <p className="text-sm text-red-600 dark:text-red-400">
-              {error.message}
-            </p>
-          )}
-
-          {products && products.length > 0 && (
+          {products.length > 0 && (
             <table className="w-full [&_td]:p-2 [&_th]:p-2 -mx-2 border border-stone-200 dark:border-zinc-800 rounded-md">
               <thead className="bg-stone-100 dark:bg-zinc-800">
                 <tr className="border-b border-stone-200 dark:border-zinc-800">
@@ -64,7 +59,7 @@ const Home = () => {
             </table>
           )}
 
-          {products && products.length === 0 && (
+          {!isPending && products.length === 0 && (
             <p className="text-sm text-stone-500 dark:text-zinc-400">
               No products.
             </p>

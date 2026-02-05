@@ -3,9 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 
 import { SafeProductImage } from "@/components/ui/safe-product-image";
-import { getProductByNumberOptions } from "@/hooks/query-options";
-import type { Product } from "@/schemas/product";
-import { useQuery } from "@tanstack/react-query";
+import { useProductsStore } from "@/store/products-store";
 import useEmblaCarousel from "embla-carousel-react";
 
 export default function Page() {
@@ -13,37 +11,16 @@ export default function Page() {
   const router = useRouter();
   const [emblaRef] = useEmblaCarousel({});
 
-  const productName = params?.name as string;
-  const { data, isPending, error } = useQuery(
-    getProductByNumberOptions(productName),
-  );
+  const productName = decodeURIComponent(params?.name as string);
+  const product = useProductsStore((s) => s.getProductByName(productName));
+  const hasSyncedOnce = useProductsStore((s) => s.hasSyncedOnce);
 
-  const product: Product | undefined = data
-    ? Array.isArray(data)
-      ? data[0]
-      : data
-    : undefined;
+  const isPending = !hasSyncedOnce && !product;
 
   if (isPending) {
     return (
       <div className="flex min-h-screen items-center justify-center font-sans dark:bg-black dark:text-zinc-50">
         <p className="text-lg">Loading...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-4 font-sans dark:bg-black dark:text-zinc-50">
-        <p className="text-lg text-red-600 dark:text-red-400">
-          {error.message}
-        </p>
-        <button
-          onClick={() => router.back()}
-          className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-        >
-          Go Back
-        </button>
       </div>
     );
   }

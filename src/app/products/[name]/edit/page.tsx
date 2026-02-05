@@ -5,10 +5,10 @@ import { useCallback, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
 import { SafeProductImage } from "@/components/ui/safe-product-image";
-import { getProductByNumberOptions } from "@/hooks/query-options";
 import type { Product, ProductImage } from "@/schemas/product";
+import { useProductsStore } from "@/store/products-store";
 import type { UseMutationResult } from "@tanstack/react-query";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import useEmblaCarousel from "embla-carousel-react";
 
 function EditProductForm({
@@ -267,19 +267,12 @@ function EditProductForm({
 export default function Page() {
   const params = useParams();
   const router = useRouter();
-  const queryClient = useQueryClient();
   const [emblaRef] = useEmblaCarousel({});
 
   const productName = decodeURIComponent(params?.name as string);
-  const { data, isPending, error } = useQuery(
-    getProductByNumberOptions(productName),
-  );
-
-  const product: Product | undefined = data
-    ? Array.isArray(data)
-      ? data[0]
-      : data
-    : undefined;
+  const product = useProductsStore((s) => s.getProductByName(productName));
+  const hasSyncedOnce = useProductsStore((s) => s.hasSyncedOnce);
+  const mergeProducts = useProductsStore((s) => s.mergeProducts);
 
   const mutation = useMutation({
     mutationFn: async (patch: {
@@ -303,43 +296,18 @@ export default function Page() {
       return res.json();
     },
     onSuccess: (updated: Product | Product[]) => {
-      const newProductName = Array.isArray(updated)
-        ? updated[0]?.name
-        : updated?.name;
-      const newName = productName ?? newProductName;
-      queryClient.invalidateQueries({
-        queryKey: ["products", { name: productName }],
-      });
-      if (newName !== newProductName) {
-        queryClient.invalidateQueries({
-          queryKey: ["products", { name: newName }],
-        });
-      }
-      queryClient.invalidateQueries({ queryKey: ["products"] });
-      router.push(`/products/${encodeURIComponent(newName)}`);
+      mergeProducts(updated);
+      const newName = Array.isArray(updated) ? updated[0]?.name : updated?.name;
+      router.push(`/products/${encodeURIComponent(newName ?? productName)}`);
     },
   });
+
+  const isPending = !hasSyncedOnce && !product;
 
   if (isPending) {
     return (
       <div className="flex min-h-screen items-center justify-center font-sans dark:bg-black dark:text-zinc-50">
         <p className="text-lg">Loading...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-4 font-sans dark:bg-black dark:text-zinc-50">
-        <p className="text-lg text-red-600 dark:text-red-400">
-          {error.message}
-        </p>
-        <button
-          onClick={() => router.back()}
-          className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-        >
-          Go Back
-        </button>
       </div>
     );
   }
