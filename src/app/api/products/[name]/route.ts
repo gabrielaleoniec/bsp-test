@@ -9,8 +9,6 @@ export async function GET(
 ) {
   const productName = decodeURIComponent((await params).name);
 
-  console.log(productName);
-
   const matchingProducts = products.filter(
     (product) => product.name.toLowerCase() === productName.toLowerCase(),
   );
