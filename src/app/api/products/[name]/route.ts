@@ -5,12 +5,14 @@ import { ProductPatchSchema } from "@/schemas/product";
 
 export async function GET(
   _: NextRequest,
-  { params }: { params: Promise<{ number: string }> },
+  { params }: { params: Promise<{ name: string }> },
 ) {
-  const productNumber = decodeURIComponent((await params).number);
+  const productName = decodeURIComponent((await params).name);
+
+  console.log(productName);
 
   const matchingProducts = products.filter(
-    (product) => product.number.toLowerCase() === productNumber.toLowerCase(),
+    (product) => product.name.toLowerCase() === productName.toLowerCase(),
   );
 
   if (matchingProducts.length === 0) {
@@ -24,9 +26,9 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ number: string }> },
+  { params }: { params: Promise<{ name: string }> },
 ) {
-  const productNumber = decodeURIComponent((await params).number);
+  const productName = decodeURIComponent((await params).name);
 
   const body = await request.json();
   const parsed = ProductPatchSchema.safeParse(body);
@@ -40,7 +42,7 @@ export async function PATCH(
   const patch = parsed.data;
   const indices = products
     .map((p, i) =>
-      p.number.toLowerCase() === productNumber.toLowerCase() ? i : -1,
+      p.name.toLowerCase() === productName.toLowerCase() ? i : -1,
     )
     .filter((i) => i >= 0);
 

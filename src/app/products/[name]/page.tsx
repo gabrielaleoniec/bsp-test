@@ -13,9 +13,9 @@ export default function Page() {
   const router = useRouter();
   const [emblaRef] = useEmblaCarousel({});
 
-  const productNumber = params?.number as string;
+  const productName = params?.name as string;
   const { data, isPending, error } = useQuery(
-    getProductByNumberOptions(productNumber),
+    getProductByNumberOptions(productName),
   );
 
   const product: Product | undefined = data
@@ -95,7 +95,9 @@ export default function Page() {
       </div>
       <button
         className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-        onClick={() => router.push(`/products/${product.number}/edit`)}
+        onClick={() =>
+          router.push(`/products/${encodeURIComponent(product.name)}/edit`)
+        }
       >
         Edit
       </button>

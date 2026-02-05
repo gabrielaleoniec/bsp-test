@@ -270,9 +270,9 @@ export default function Page() {
   const queryClient = useQueryClient();
   const [emblaRef] = useEmblaCarousel({});
 
-  const productNumber = params?.number as string;
+  const productName = decodeURIComponent(params?.name as string);
   const { data, isPending, error } = useQuery(
-    getProductByNumberOptions(productNumber),
+    getProductByNumberOptions(productName),
   );
 
   const product: Product | undefined = data
@@ -289,7 +289,7 @@ export default function Page() {
       images?: ProductImage[];
     }) => {
       const res = await fetch(
-        `/api/products/${encodeURIComponent(productNumber)}`,
+        `/api/products/${encodeURIComponent(productName)}`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
@@ -303,18 +303,20 @@ export default function Page() {
       return res.json();
     },
     onSuccess: (updated: Product | Product[]) => {
-      const num = Array.isArray(updated) ? updated[0]?.number : updated?.number;
-      const newNumber = num ?? productNumber;
+      const newProductName = Array.isArray(updated)
+        ? updated[0]?.name
+        : updated?.name;
+      const newName = productName ?? newProductName;
       queryClient.invalidateQueries({
-        queryKey: ["products", { number: productNumber }],
+        queryKey: ["products", { name: productName }],
       });
-      if (newNumber !== productNumber) {
+      if (newName !== newProductName) {
         queryClient.invalidateQueries({
-          queryKey: ["products", { number: newNumber }],
+          queryKey: ["products", { name: newName }],
         });
       }
       queryClient.invalidateQueries({ queryKey: ["products"] });
-      router.push(`/products/${encodeURIComponent(newNumber)}`);
+      router.push(`/products/${encodeURIComponent(newName)}`);
     },
   });
 
