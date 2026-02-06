@@ -1,4 +1,6 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Tiny product PIM
+
+Tiny simulation of a list of products with the possibility to edit a product
 
 ## Getting Started
 
