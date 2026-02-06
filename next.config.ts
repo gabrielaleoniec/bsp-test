@@ -1,6 +1,17 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      // Basic redirect
+      {
+        source: "/products",
+        destination: "/",
+        permanent: true,
+      },
+      // Wildcard path matching
+    ];
+  },
   images: {
     remotePatterns: [
       { protocol: "http", hostname: "localhost", pathname: "/**" },
