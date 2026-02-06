@@ -14,11 +14,11 @@ beforeEach(() => {
 
 describe("Home (basic page)", () => {
   it("renders the Products heading", () => {
-    renderHome();
     useProductsStore.setState({ hasSyncedOnce: true });
-    const element = screen.getByRole("heading", { name: /products/i });
-
-    expect(element).toBeInTheDocument();
+    renderHome();
+    expect(
+      screen.getByRole("heading", { name: /products/i }),
+    ).toBeInTheDocument();
   });
 
   it("shows Loading when not synced yet", () => {
